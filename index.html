@@ -3,422 +3,439 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mercantil Sonimax</title>
+<title>Mercantil Sonimax | Catálogo Premium</title>
 <style>
-  /* Header */
+/* Reset básico y variables */
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: #f4f7f9; color: #333; }
+
+/* Header estilo Amazon Dark */
 header {
-  display:flex;
-  flex-wrap:wrap;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  align-items:center;
-  padding:10px 20px;
-  background:#131921;
-  color:white;
+  align-items: center;
+  padding: 10px 20px;
+  background: #131921;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 /* Logo */
 header .logo {
-  display:flex;
-  align-items:center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 header .logo img {
-  height:50px;
-  width:auto;
-  margin-right:10px;
-  border-radius:6px;
+  height: 50px;
+  width: auto;
+  border-radius: 6px;
+  background: white; /* Resalta el logo si es transparente */
+  padding: 2px;
 }
+
+header .logo h1 { font-size: 20px; color: #febd69; }
 
 /* Barra de búsqueda y filtro */
 header .search-filters {
-  display:flex;
-  flex:1;
-  max-width:500px;
-  margin:10px;
+  display: flex;
+  flex: 1;
+  max-width: 600px;
+  margin: 10px 20px;
+  gap: 10px;
 }
 
 header .search-filters input,
 header .search-filters select {
-  padding:8px 10px;
-  border-radius:6px;
-  border:none;
-  margin-right:10px;
-  flex:1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
 }
+
+header .search-filters input { flex: 2; }
+header .search-filters select { flex: 1; cursor: pointer; }
 
 /* Botones usuario/admin */
 header .user-buttons {
-  display:flex;
-  align-items:center;
-  gap:10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-header .user-buttons button {
-  background:#febd69;
-  color:#111;
-  font-weight:bold;
-  padding:8px 12px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
 }
+
+.btn-admin { background: #febd69; color: #111; }
+.btn-logout { background: #f0c14b; color: #111; }
+.btn-save { background: #131921; color: white; width: 100%; margin-top: 10px; }
+.btn-backup { background: #37475a; color: white; font-size: 11px; flex: 1; }
+
+.btn-whatsapp { 
+    background: #25D366; 
+    color: white !important; 
+    text-decoration: none; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 50px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+/* Panel Admin */
+.admin-container {
+  max-width: 500px;
+  margin: 20px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.admin-container input, .admin-container textarea {
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.backup-zone {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+}
+
+/* Grid de Productos */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover { transform: translateY(-5px); }
+
+.card-img-container { width: 100%; aspect-ratio: 4/3; background: #eee; overflow: hidden; }
+.card-img-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-body { padding: 15px; flex-grow: 1; }
+.card-body h3 { font-size: 17px; margin-bottom: 5px; color: #111; }
+.card-body .price { font-size: 20px; color: #b12704; font-weight: bold; }
+.card-body .code { font-size: 12px; color: #777; }
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(4px);
+}
+.modal-content {
+  background: white;
+  width: 90%; max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  border-radius: 15px;
+  position: relative;
+  text-align: center;
+}
+.modal-content img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; }
+
+.close-modal { position: absolute; top: 10px; right: 20px; font-size: 35px; cursor: pointer; color: #333; }
+
+.hidden { display: none !important; }
 
 /* Responsive */
 @media(max-width: 800px){
-  header { flex-direction:column; align-items:flex-start; }
-  header .search-filters { width:100%; margin:10px 0; }
-  header .user-buttons { width:100%; justify-content:flex-start; margin-bottom:10px; }
-}
-/* Reset básico */
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
-
-/* Header estilo Amazon */
-<header>
-  <!-- Logo -->
-  <div class="logo">
-    <img src="https://creepy-turquoise-5q2ltoy3vx.edgeone.app/logo%20soniamx%20sin%20sombra.png" alt="SONIMAX" id="logoEmpresa">
-    <h1>Mi Tienda Premium</h1>
-  </div>
-
-  <!-- Barra de búsqueda y filtros -->
-  <div class="search-filters">
-    <input type="text" id="buscador" placeholder="Buscar nombre o código">
-    <select id="filtroCategoria">
-      <option value="">Todas las categorías</option>
-    </select>
-  </div>
-
-  <!-- Botones de usuario/admin -->
-  <div class="user-buttons">
-    <button class="admin-btn" onclick="mostrarLogin()">Admin</button>
-    <button class="logout-btn hidden" id="logoutBtn" onclick="cerrarSesion()">Cerrar sesión</button>
-  </div>
-</header>
-
-header h1 { font-size:24px; }
-
-header .buttons button {
-  background:##2a36b8;
-  color:#111;
-  font-weight:bold;
-  padding:8px 12px;
-  margin-left:10px;
-  border:1px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-/* Buscador */
-#buscador { width:300px; padding:8px; border-radius:6px; border:none; margin-right:10px; }
-
-/* Filtro categorías */
-#filtroCategoria { padding:8px; border-radius:6px; border:none; }
-
-/* Login */
-.login-box {
-  width:300px; margin:40px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center;
-}
-
-/* Panel admin */
-#adminPanel {
-  background:white; padding:20px; margin:20px auto; width:320px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-
-#adminPanel input { width:90%; margin:5px 0; padding:8px; border-radius:6px; border:1px solid #ccc; }
-
-#adminPanel button { width:95%; padding:10px; margin-top:10px; background:#131921; color:white; font-weight:bold; border:none; border-radius:6px; cursor:pointer; }
-
-/* Grid productos estilo Amazon */
-.grid {
-  display: flex;             /* usamos flexbox */
-  flex-wrap: wrap;           /* permite que las tarjetas pasen a la siguiente fila */
-  gap:20px;                  /* espacio entre tarjetas */
-  justify-content: flex-start;
-  padding:20px;
-}
-
-/* Contenedor tarjeta */
-.card {
-  width: 320px;              /* ancho fijo de la tarjeta */
-  background:white;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-  display:flex;
-  flex-direction: column;
-  margin:10px;
-}
-
-/* Hover efecto */
-.card:hover {
-  transform:translateY(-5px);
-}
-
-/* Contenedor de la imagen con proporción 4:3 */
-.card-img-container {
-  width:100%;
-  aspect-ratio: 4/3;       /* Mantiene proporción 1600x1200 */
-  overflow:hidden;
-}
-
-.card-img-container img {
-  width:100%;
-  height:100%;
-  object-fit:cover;        /* llena el contenedor sin deformarse */
-}
-
-/* Contenido debajo de la imagen */
-.card-body {
-  padding:15px;
-  flex-grow:1;
-}
-
-.card-body h3 { font-size:18px; margin-bottom:5px; }
-
-.card-body p { font-size:14px; margin-bottom:5px; color:#555; }
-
-.card-body .price { font-weight:bold; font-size:16px; color:#b12704; }
-
-.card-body button {
-  background:#f0c14b; border:1px solid #a88734; border-radius:4px;
-  padding:6px 10px; margin-top:5px; cursor:pointer; font-weight:bold;
-}
-
-/* Botones ocultos por defecto */
-.hidden { display:none; }
-
-/* Responsive */
-@media(max-width: 600px){
-  .card { width: 100%; }
-}
-  /* Modal */
-.modal {
-  display: none; /* oculto por defecto */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.8); /* fondo semi-transparente */
-}
-
-.modal-content {
-  background:white;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 700px;
-  display:flex;
-  flex-direction: column;
-  align-items:center;
-}
-
-.modal-content img {
-  width:100%;
-  height:auto;
-  max-height:400px;
-  object-fit:cover;
-  border-radius:10px;
-}
-
-.modal-content h3 {
-  margin:15px 0 5px 0;
-}
-
-.modal-content p {
-  margin:5px 0;
-}
-
-.close-modal {
-  position:absolute;
-  top:20px;
-  right:30px;
-  font-size:28px;
-  font-weight:bold;
-  color:white;
-  cursor:pointer;
+  header { flex-direction: column; }
+  header .search-filters { width: 100%; margin: 10px 0; }
+  header .user-buttons { width: 100%; justify-content: center; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Mercantil Sonimax</h1>
-  <div class="buttons">
-    <input type="text" id="buscador" placeholder="Buscar nombre o código">
+  <div class="logo">
+    <img src="https://creepy-turquoise-5q2ltoy3vx.edgeone.app/logo%20soniamx%20sin%20sombra.png" alt="SONIMAX">
+    <h1>Sonimax Premium</h1>
+  </div>
+
+  <div class="search-filters">
+    <input type="text" id="buscador" placeholder="Buscar por nombre o código...">
     <select id="filtroCategoria">
       <option value="">Todas las categorías</option>
     </select>
-    <button class="admin-btn" onclick="mostrarLogin()">Admin</button>
-    <button class="logout-btn hidden" id="logoutBtn" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+
+  <div class="user-buttons">
+    <button id="btnAdminLogin" class="btn btn-admin" onclick="toggleLogin()">Admin</button>
+    <button id="btnLogout" class="btn btn-logout hidden" onclick="cerrarSesion()">Cerrar Sesión</button>
   </div>
 </header>
 
-<!-- LOGIN -->
-<div id="loginSection" class="login-box hidden">
-  <h3>Administrador</h3>
-  <input type="password" id="password" placeholder="Contraseña">
-  <button onclick="login()">Ingresar</button>
+<div id="loginSection" class="admin-container hidden">
+  <h3>Panel de Control</h3>
+  <input type="password" id="passInput" placeholder="Contraseña de administrador">
+  <button class="btn btn-save" onclick="login()">Ingresar</button>
 </div>
 
-<!-- PANEL ADMIN -->
-<div id="adminPanel" class="hidden">
-  <h3>Agregar Producto</h3>
-  <input type="text" id="codigo" placeholder="Código del producto">
-  <input type="text" id="nombre" placeholder="Nombre">
-  <input type="text" id="descripcion" placeholder="Descripción">
-  <input type="text" id="categoria" placeholder="Categoría">
-  <input type="number" id="precio" placeholder="Precio">
-  <input type="file" id="imagen" accept="image/*">
-  <button onclick="guardarProducto()">Guardar Producto</button>
-</div>
+<div id="adminPanel" class="admin-container hidden">
+  <h3 id="panelTitle">Agregar Nuevo Producto</h3>
+  <input type="text" id="inpCodigo" placeholder="Código de producto">
+  <input type="text" id="inpNombre" placeholder="Nombre del producto">
+  <textarea id="inpDesc" placeholder="Descripción detallada" rows="2" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; margin:8px 0;"></textarea>
+  <input type="text" id="inpCat" placeholder="Categoría">
+  <input type="number" id="inpPrecio" placeholder="Precio ($)">
+  <input type="file" id="inpImg" accept="image/*">
+  
+  <button id="btnGuardar" class="btn btn-save" onclick="guardarProducto()">Guardar Cambios</button>
+  <button id="btnCancelarEdit" class="btn hidden" style="width:100%; margin-top:5px; background:#ccc;" onclick="limpiarFormulario()">Cancelar Edición</button>
 
-<!-- Grid Productos -->
-<div class="grid" id="tienda"></div>
-
-<script>
-// 🔐 Configuración
-const ADMIN_PASSWORD = "1234"; // cambia la contraseña
-
-let productos = JSON.parse(localStorage.getItem("productos")) || [];
-
-const tienda = document.getElementById("tienda");
-const buscador = document.getElementById("buscador");
-const filtroCategoria = document.getElementById("filtroCategoria");
-
-function guardarLocal(){ localStorage.setItem("productos", JSON.stringify(productos)); }
-
-// Actualizar categorías automáticamente
-function actualizarCategorias(){
-  const categorias = [...new Set(productos.map(p=>p.categoria))];
-  filtroCategoria.innerHTML='<option value="">Todas las categorías</option>';
-  categorias.forEach(cat => filtroCategoria.innerHTML+=`<option value="${cat}">${cat}</option>`);
-}
-
-// Renderizar productos
-function renderizar(){
-  const textoBusqueda = buscador.value.toLowerCase();
-  const categoriaSeleccionada = filtroCategoria.value;
-
-  tienda.innerHTML = "";
-
-   productos.filter(p=>
-    (p.nombre.toLowerCase().includes(textoBusqueda) || p.codigo.toLowerCase().includes(textoBusqueda)) &&
-    (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
-  ).forEach((p,i)=>{
-    tienda.innerHTML += `
-      <div class="card" onclick="abrirModal(${i})">
-      <div class="card-img-container">
-        <img src="${p.imagen}">
-      </div>
-      <div class="card-body">
-        <h3>${p.nombre}</h3>
-        <p>${p.descripcion}</p>
-        <p><strong>Código:</strong> ${p.codigo}</p>
-        <p><strong>Categoría:</strong> ${p.categoria}</p>
-        <p class="price">$${p.precio}</p>
-        ${isAdmin()?`<button onclick="event.stopPropagation(); editar(${i})">Editar</button>
-                      <button onclick="event.stopPropagation(); eliminar(${i})">Eliminar</button>`:``}
-      </div>
-      </div>
-    `;
-  });
-
-  actualizarCategorias();
-}
-
-// Guardar producto
-function guardarProducto(){
-  const file = document.getElementById("imagen").files[0];
-  const reader = new FileReader();
-  reader.onload = function(){
-    productos.push({
-      codigo: codigo.value,
-      nombre: nombre.value,
-      descripcion: descripcion.value,
-      categoria: categoria.value,
-      precio: precio.value,
-      imagen: reader.result
-    });
-    guardarLocal();
-    renderizar();
-  }
-  if(file) reader.readAsDataURL(file);
-}
-
-// Editar y eliminar
-function eliminar(i){ productos.splice(i,1); guardarLocal(); renderizar(); }
-function editar(i){ alert("Modo edición simplificado. Puedes mejorarlo después 😉"); }
-
-// Login Admin
-function mostrarLogin(){ document.getElementById("loginSection").classList.toggle("hidden"); }
-function login(){
-  if(document.getElementById("password").value===ADMIN_PASSWORD){
-    localStorage.setItem("admin","true");
-    document.getElementById("adminPanel").classList.remove("hidden");
-    document.getElementById("logoutBtn").classList.remove("hidden");
-    document.getElementById("loginSection").classList.add("hidden");
-    renderizar();
-  } else alert("Contraseña incorrecta");
-}
-function cerrarSesion(){
-  localStorage.removeItem("admin");
-  document.getElementById("adminPanel").classList.add("hidden");
-  document.getElementById("logoutBtn").classList.add("hidden");
-  renderizar();
-}
-function isAdmin(){ return localStorage.getItem("admin")==="true"; }
-
-if(isAdmin()){ document.getElementById("adminPanel").classList.remove("hidden"); document.getElementById("logoutBtn").classList.remove("hidden"); }
-
-buscador.addEventListener("input",renderizar);
-filtroCategoria.addEventListener("change",renderizar);
-
-renderizar();
-  // Modal
-const modal = document.getElementById("modalProducto");
-const modalImagen = document.getElementById("modalImagen");
-const modalNombre = document.getElementById("modalNombre");
-const modalDescripcion = document.getElementById("modalDescripcion");
-const modalCodigo = document.getElementById("modalCodigo");
-const modalCategoria = document.getElementById("modalCategoria");
-const modalPrecio = document.getElementById("modalPrecio");
-
-function abrirModal(i){
-  const p = productos[i];
-  modalImagen.src = p.imagen;
-  modalNombre.textContent = p.nombre;
-  modalDescripcion.textContent = p.descripcion;
-  modalCodigo.textContent = p.codigo;
-  modalCategoria.textContent = p.categoria;
-  modalPrecio.textContent = "$" + p.precio;
-  modal.style.display = "block";
-}
-
-function cerrarModal(){
-  modal.style.display = "none";
-}
-
-// Cerrar al hacer clic fuera del modal
-window.onclick = function(event){
-  if(event.target == modal) modal.style.display = "none";
-}
-</script>
-  <!-- Modal Producto -->
-<div id="modalProducto" class="modal">
-  <span class="close-modal" onclick="cerrarModal()">&times;</span>
-  <div class="modal-content" id="modalContent">
-    <img id="modalImagen" src="">
-    <h3 id="modalNombre"></h3>
-    <p id="modalDescripcion"></p>
-    <p><strong>Código:</strong> <span id="modalCodigo"></span></p>
-    <p><strong>Categoría:</strong> <span id="modalCategoria"></span></p>
-    <p class="price" id="modalPrecio"></p>
+  <div class="backup-zone">
+      <button class="btn btn-backup" onclick="descargarRespaldo()">📥 Exportar JSON</button>
+      <button class="btn btn-backup" onclick="document.getElementById('importFile').click()">📤 Importar JSON</button>
+      <input type="file" id="importFile" class="hidden" accept=".json" onchange="cargarRespaldo(event)">
   </div>
 </div>
+
+<div class="grid" id="tienda"></div>
+
+<div id="modalProducto" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="cerrarModal()">&times;</span>
+    <img id="mImg" src="">
+    <h2 id="mNombre" style="margin-top:15px"></h2>
+    <p id="mDesc" style="color:#555; margin:10px 0; line-height: 1.4;"></p>
+    <p><strong>Código:</strong> <span id="mCodigo"></span></p>
+    <p class="price" id="mPrecio" style="margin:10px 0; font-size: 24px;"></p>
+    
+    <a id="btnWha" href="#" target="_blank" class="btn-whatsapp">
+        Consultar disponibilidad (WhatsApp)
+    </a>
+  </div>
+</div>
+
+<script>
+// --- CONFIGURACIÓN ---
+const WHATSAPP_NUM = "584120000000"; // Reemplaza con tu número real
+const ADMIN_PASS = "1234";
+
+let productos = JSON.parse(localStorage.getItem("sonimax_v3_db")) || [];
+let editandoIndex = -1;
+
+// --- FUNCIONES DE RENDERIZADO ---
+
+function renderizar() {
+    const busqueda = document.getElementById("buscador").value.toLowerCase();
+    const catFiltro = document.getElementById("filtroCategoria").value;
+    const tienda = document.getElementById("tienda");
+    const adminMode = esAdmin();
+    
+    tienda.innerHTML = "";
+    
+    productos.forEach((p, i) => {
+        if ((p.nombre.toLowerCase().includes(busqueda) || p.codigo.toLowerCase().includes(busqueda)) &&
+            (catFiltro === "" || p.categoria === catFiltro)) {
+            
+            const card = document.createElement("div");
+            card.className = "card";
+            card.onclick = () => abrirModal(i);
+            card.innerHTML = `
+                <div class="card-img-container"><img src="${p.imagen}"></div>
+                <div class="card-body">
+                    <p class="code">REF: ${p.codigo}</p>
+                    <h3>${p.nombre}</h3>
+                    <p class="price">$${parseFloat(p.precio).toLocaleString('en-US', {minimumFractionDigits: 2})}</p>
+                    ${adminMode ? `
+                        <div style="margin-top:10px; display:flex; gap:5px" onclick="event.stopPropagation()">
+                            <button class="btn" style="background:#f0c14b; flex:1; font-size:12px;" onclick="cargarEdicion(${i})">Editar</button>
+                            <button class="btn" style="background:#db0012; color:white; flex:1; font-size:12px;" onclick="eliminar(${i})">Borrar</button>
+                        </div>
+                    ` : ''}
+                </div>`;
+            tienda.appendChild(card);
+        }
+    });
+    actualizarCategoriasDinamicas();
+}
+
+function guardarProducto() {
+    const file = document.getElementById("inpImg").files[0];
+    const datos = {
+        codigo: document.getElementById("inpCodigo").value,
+        nombre: document.getElementById("inpNombre").value,
+        descripcion: document.getElementById("inpDesc").value,
+        categoria: document.getElementById("inpCat").value,
+        precio: document.getElementById("inpPrecio").value
+    };
+
+    if(!datos.nombre || !datos.precio) return alert("Completa al menos Nombre y Precio");
+
+    const procesoFinal = (imgData) => {
+        if(editandoIndex > -1) {
+            productos[editandoIndex] = { ...datos, imagen: imgData || productos[editandoIndex].imagen };
+        } else {
+            if(!imgData) return alert("La imagen es obligatoria para nuevos productos");
+            productos.push({ ...datos, imagen: imgData });
+        }
+        localStorage.setItem("sonimax_v3_db", JSON.stringify(productos));
+        limpiarFormulario();
+        renderizar();
+    };
+
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = () => procesoFinal(reader.result);
+        reader.readAsDataURL(file);
+    } else {
+        procesoFinal(null);
+    }
+}
+
+// --- EDICIÓN Y RESPALDO ---
+
+function cargarEdicion(i) {
+    editandoIndex = i;
+    const p = productos[i];
+    document.getElementById("inpCodigo").value = p.codigo;
+    document.getElementById("inpNombre").value = p.nombre;
+    document.getElementById("inpDesc").value = p.descripcion;
+    document.getElementById("inpCat").value = p.categoria;
+    document.getElementById("inpPrecio").value = p.precio;
+    document.getElementById("panelTitle").innerText = "Modificando Producto";
+    document.getElementById("btnCancelarEdit").classList.remove("hidden");
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function limpiarFormulario() {
+    editandoIndex = -1;
+    document.getElementById("panelTitle").innerText = "Agregar Nuevo Producto";
+    document.getElementById("btnCancelarEdit").classList.add("hidden");
+    ["inpCodigo", "inpNombre", "inpDesc", "inpCat", "inpPrecio", "inpImg"].forEach(id => document.getElementById(id).value = "");
+}
+
+function descargarRespaldo() {
+    const dataStr = JSON.stringify(productos, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sonimax_backup_${new Date().toLocaleDateString()}.json`;
+    link.click();
+}
+
+function cargarRespaldo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if(confirm(`Se cargarán ${data.length} productos. Se borrarán los actuales. ¿Proceder?`)) {
+                productos = data;
+                localStorage.setItem("sonimax_v3_db", JSON.stringify(productos));
+                renderizar();
+            }
+        } catch (err) { alert("Error: Archivo de respaldo no válido"); }
+    };
+    reader.readAsText(file);
+}
+
+// --- MODAL Y WHATSAPP ---
+
+function abrirModal(i) {
+    const p = productos[i];
+    document.getElementById("mImg").src = p.imagen;
+    document.getElementById("mNombre").innerText = p.nombre;
+    document.getElementById("mDesc").innerText = p.descripcion || "Sin descripción disponible.";
+    document.getElementById("mCodigo").innerText = p.codigo;
+    document.getElementById("mPrecio").innerText = "$" + parseFloat(p.precio).toLocaleString('en-US', {minimumFractionDigits: 2});
+    
+    const textoWha = `Hola Mercantil Sonimax, me interesa este producto:\n\n*${p.nombre}*\nCódigo: ${p.codigo}\nPrecio: $${p.precio}`;
+    document.getElementById("btnWha").href = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(textoWha)}`;
+    
+    document.getElementById("modalProducto").style.display = "block";
+}
+
+function cerrarModal() { document.getElementById("modalProducto").style.display = "none"; }
+
+// --- LOGICA DE ADMIN ---
+
+function esAdmin() { return localStorage.getItem("sonimax_admin") === "true"; }
+
+function login() {
+    if(document.getElementById("passInput").value === ADMIN_PASS) {
+        localStorage.setItem("sonimax_admin", "true");
+        actualizarVisibilidadAdmin();
+        renderizar();
+    } else alert("Clave incorrecta");
+}
+
+function cerrarSesion() {
+    localStorage.removeItem("sonimax_admin");
+    actualizarVisibilidadAdmin();
+    renderizar();
+}
+
+function actualizarVisibilidadAdmin() {
+    const logueado = esAdmin();
+    document.getElementById("adminPanel").classList.toggle("hidden", !logueado);
+    document.getElementById("btnLogout").classList.toggle("hidden", !logueado);
+    document.getElementById("btnAdminLogin").classList.toggle("hidden", logueado);
+    document.getElementById("loginSection").classList.add("hidden");
+}
+
+function toggleLogin() { document.getElementById("loginSection").classList.toggle("hidden"); }
+
+function actualizarCategoriasDinamicas() {
+    const select = document.getElementById("filtroCategoria");
+    const cats = [...new Set(productos.map(p => p.categoria))].filter(c => c);
+    const seleccionPrevia = select.value;
+    select.innerHTML = '<option value="">Todas las categorías</option>';
+    cats.forEach(c => {
+        select.innerHTML += `<option value="${c}" ${c === seleccionPrevia ? 'selected' : ''}>${c}</option>`;
+    });
+}
+
+function eliminar(i) { if(confirm("¿Eliminar este producto?")) { productos.splice(i,1); localStorage.setItem("sonimax_v3_db", JSON.stringify(productos)); renderizar(); } }
+
+// --- INICIALIZACIÓN ---
+window.onclick = (e) => { if(e.target.className === 'modal') cerrarModal(); };
+document.getElementById("buscador").oninput = renderizar;
+document.getElementById("filtroCategoria").onchange = renderizar;
+
+actualizarVisibilidadAdmin();
+renderizar();
+</script>
 </body>
 </html>
