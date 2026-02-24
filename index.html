@@ -68,7 +68,14 @@ header .buttons button {
 
 .card:hover { transform:translateY(-5px); }
 
-.card img { width:100%; height:200px; object-fit:cover; }
+.card img {
+  width:100%;
+  max-width:100%;
+  height:auto;
+  aspect-ratio: 4 / 3; /* Mantiene proporción 1600x1200 */
+  object-fit: cover;
+  border-bottom:1px solid #ccc;
+}
 
 .card-body { padding:15px; }
 
@@ -96,7 +103,7 @@ header .buttons button {
 <body>
 
 <header>
-  <h1>Mi Tienda Premium</h1>
+  <h1>Mercantil Sonimax</h1>
   <div class="buttons">
     <input type="text" id="buscador" placeholder="Buscar nombre o código">
     <select id="filtroCategoria">
