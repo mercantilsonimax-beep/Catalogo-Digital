@@ -277,7 +277,7 @@ function renderizar() {
                     <p class="price">$${parseFloat(p.precio).toLocaleString('en-US', {minimumFractionDigits: 2})}</p>
                     ${adminMode ? `
                         <div style="margin-top:10px; display:flex; gap:5px" onclick="event.stopPropagation()">
-                            <button class="btn" style="background:#f0c14b; flex:1; font-size:12px;" onclick="cargarEdicion(${i})">Editar</button>
+                            <button class="btn" style="background:#4BF095; flex:1; font-size:12px;" onclick="cargarEdicion(${i})">Editar</button>
                             <button class="btn" style="background:#db0012; color:white; flex:1; font-size:12px;" onclick="eliminar(${i})">Borrar</button>
                         </div>
                     ` : ''}
