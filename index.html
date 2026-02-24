@@ -54,14 +54,16 @@ header .buttons button {
 
 /* Grid productos estilo Amazon */
 .grid {
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap:20px;
+  display: flex;             /* usamos flexbox */
+  flex-wrap: wrap;           /* permite que las tarjetas pasen a la siguiente fila */
+  gap:20px;                  /* espacio entre tarjetas */
+  justify-content: flex-start;
   padding:20px;
 }
 
+/* Contenedor tarjeta */
 .card {
-  width: 320px;
+  width: 320px;              /* ancho fijo de la tarjeta */
   background:white;
   border-radius:10px;
   overflow:hidden;
@@ -69,19 +71,28 @@ header .buttons button {
   transition: transform 0.3s;
   display:flex;
   flex-direction: column;
+  margin:10px;
 }
 
+/* Hover efecto */
 .card:hover {
   transform:translateY(-5px);
 }
 
-.card img {
+/* Contenedor de la imagen con proporción 4:3 */
+.card-img-container {
   width:100%;
-  height:0;
-  padding-top:75%; /* Proporción 4:3 → 1600x1200 */
-  object-fit:cover;
+  aspect-ratio: 4/3;       /* Mantiene proporción 1600x1200 */
+  overflow:hidden;
 }
 
+.card-img-container img {
+  width:100%;
+  height:100%;
+  object-fit:cover;        /* llena el contenedor sin deformarse */
+}
+
+/* Contenido debajo de la imagen */
 .card-body {
   padding:15px;
   flex-grow:1;
