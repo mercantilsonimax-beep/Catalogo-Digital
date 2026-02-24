@@ -2,184 +2,213 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Catálogo Digital</title>
+<title>Tienda Profesional</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body { font-family: Arial; background:#f4f4f4; text-align:center; }
-form { background:white; padding:20px; margin:20px auto; width:300px; border-radius:10px; }
-input { width:90%; padding:8px; margin:5px; }
-button { padding:8px 12px; margin:5px; cursor:pointer; }
-.producto {
-  background:white;
-  padding:15px;
-  margin:15px;
-  border-radius:10px;
-  display:inline-block;
-  width:250px;
-  box-shadow:0 0 10px rgba(0,0,0,0.1);
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:#f5f6fa;
 }
-img { width:100%; height:150px; object-fit:cover; border-radius:8px; }
+
+header {
+  background:#111;
+  color:white;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+button {
+  padding:8px 14px;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.admin-btn { background:#ff4757; color:white; }
+.logout-btn { background:#2ed573; color:white; }
+
+.grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.card {
+  background:white;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  overflow:hidden;
+  transition:0.3s;
+}
+
+.card:hover {
+  transform:translateY(-5px);
+}
+
+.card img {
+  width:100%;
+  height:200px;
+  object-fit:cover;
+}
+
+.card-body {
+  padding:15px;
+}
+
+.price {
+  font-size:18px;
+  font-weight:bold;
+  color:#2f3542;
+}
+
+.hidden { display:none; }
+
+.login-box {
+  width:300px;
+  margin:100px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  text-align:center;
+}
+
+input {
+  width:90%;
+  padding:8px;
+  margin:8px 0;
+}
 </style>
 </head>
+
 <body>
 
-<h1>Mi Catálogo Digital</h1>
+<header>
+  <h2>Mi Tienda Online</h2>
+  <div>
+    <button class="admin-btn" onclick="mostrarLogin()">Admin</button>
+    <button class="logout-btn hidden" id="logoutBtn" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+</header>
 
-<form id="formulario">
-  <input type="hidden" id="indice">
-  <input type="text" id="codigo" placeholder="Código del producto" required>
-  <input type="text" id="nombre" placeholder="Nombre" required>
-  <input type="text" id="descripcion" placeholder="Descripción" required>
-  <input type="text" id="categoria" placeholder="Categoría" required>
-  <input type="number" id="precio" placeholder="Precio" required>
-  <input type="file" id="imagen" accept="image/*" required>
-  <button type="submit">Guardar Producto</button>
-</form>
+<!-- LOGIN -->
+<div id="loginSection" class="login-box hidden">
+  <h3>Administrador</h3>
+  <input type="password" id="password" placeholder="Contraseña">
+  <button onclick="login()">Ingresar</button>
+</div>
 
-<div id="contenedor"><hr>
+<!-- PANEL ADMIN -->
+<div id="adminPanel" class="hidden" style="padding:20px;">
+  <h3>Agregar Producto</h3>
+  <input type="text" id="codigo" placeholder="Código">
+  <input type="text" id="nombre" placeholder="Nombre">
+  <input type="text" id="descripcion" placeholder="Descripción">
+  <input type="text" id="categoria" placeholder="Categoría">
+  <input type="number" id="precio" placeholder="Precio">
+  <input type="file" id="imagen" accept="image/*">
+  <button onclick="guardarProducto()">Guardar</button>
+</div>
 
-<h2>Buscar y Filtrar</h2>
-
-<input type="text" id="buscador" placeholder="Buscar por nombre o código">
-<select id="filtroCategoria">
-  <option value="">Todas las categorías</option>
-</select>
-
-<br><br>
-
-<button onclick="exportarTXT()">Exportar Base de Datos (TXT)</button>
-<input type="file" id="importarArchivo" accept=".txt">
-<button onclick="importarTXT()">Importar Base de Datos</button>
-
-<hr></div>
+<!-- TIENDA -->
+<div class="grid" id="tienda"></div>
 
 <script>
+const ADMIN_PASSWORD = "1234"; // 🔐 cambia esta contraseña
+
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
-const formulario = document.getElementById("formulario");
-const contenedor = document.getElementById("contenedor");
-const buscador = document.getElementById("buscador");
-const filtroCategoria = document.getElementById("filtroCategoria");
-
-function guardarLocal() {
+function guardarLocal(){
   localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-function actualizarCategorias() {
-  const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
-  filtroCategoria.innerHTML = '<option value="">Todas las categorías</option>';
-  categoriasUnicas.forEach(cat => {
-    filtroCategoria.innerHTML += `<option value="${cat}">${cat}</option>`;
+function renderizar(){
+  const tienda = document.getElementById("tienda");
+  tienda.innerHTML="";
+  productos.forEach((p,i)=>{
+    tienda.innerHTML += `
+      <div class="card">
+        <img src="${p.imagen}">
+        <div class="card-body">
+          <h4>${p.nombre}</h4>
+          <p>${p.descripcion}</p>
+          <p class="price">$${p.precio}</p>
+          ${isAdmin() ? `
+            <button onclick="editar(${i})">Editar</button>
+            <button onclick="eliminar(${i})">Eliminar</button>
+          ` : ``}
+        </div>
+      </div>
+    `;
   });
 }
 
-function mostrarProductos() {
-  const textoBusqueda = buscador.value.toLowerCase();
-  const categoriaSeleccionada = filtroCategoria.value;
-
-  contenedor.innerHTML = "";
-
-  productos
-    .filter(p =>
-      (p.nombre.toLowerCase().includes(textoBusqueda) ||
-       p.codigo.toLowerCase().includes(textoBusqueda)) &&
-      (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
-    )
-    .forEach((producto, index) => {
-      contenedor.innerHTML += `
-        <div class="producto">
-          <img src="${producto.imagen}">
-          <h3>${producto.nombre}</h3>
-          <p><strong>Código:</strong> ${producto.codigo}</p>
-          <p><strong>Categoría:</strong> ${producto.categoria}</p>
-          <p>${producto.descripcion}</p>
-          <p><strong>$${producto.precio}</strong></p>
-          <button onclick="editar(${index})">Editar</button>
-          <button onclick="eliminar(${index})">Eliminar</button>
-        </div>
-      `;
-    });
-
-  actualizarCategorias();
-}
-
-formulario.addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const indice = document.getElementById("indice").value;
-  const fileInput = document.getElementById("imagen");
-  const file = fileInput.files[0];
+function guardarProducto(){
+  const file = document.getElementById("imagen").files[0];
   const reader = new FileReader();
-
-  reader.onload = function() {
-    const producto = {
-      codigo: document.getElementById("codigo").value,
-      nombre: document.getElementById("nombre").value,
-      descripcion: document.getElementById("descripcion").value,
-      categoria: document.getElementById("categoria").value,
-      precio: document.getElementById("precio").value,
+  reader.onload = function(){
+    productos.push({
+      codigo: codigo.value,
+      nombre: nombre.value,
+      descripcion: descripcion.value,
+      categoria: categoria.value,
+      precio: precio.value,
       imagen: reader.result
-    };
-
-    if (indice === "") {
-      productos.push(producto);
-    } else {
-      productos[indice] = producto;
-      document.getElementById("indice").value = "";
-    }
-
+    });
     guardarLocal();
-    formulario.reset();
-    mostrarProductos();
-  };
-
-  if (file) reader.readAsDataURL(file);
-});
-
-function editar(index) {
-  const p = productos[index];
-  document.getElementById("codigo").value = p.codigo;
-  document.getElementById("nombre").value = p.nombre;
-  document.getElementById("descripcion").value = p.descripcion;
-  document.getElementById("categoria").value = p.categoria;
-  document.getElementById("precio").value = p.precio;
-  document.getElementById("indice").value = index;
+    renderizar();
+  }
+  if(file) reader.readAsDataURL(file);
 }
 
-function eliminar(index) {
-  if (confirm("¿Eliminar este producto?")) {
-    productos.splice(index, 1);
-    guardarLocal();
-    mostrarProductos();
+function eliminar(i){
+  productos.splice(i,1);
+  guardarLocal();
+  renderizar();
+}
+
+function editar(i){
+  alert("Modo edición simplificado. Puedes mejorarlo luego 😉");
+}
+
+function mostrarLogin(){
+  document.getElementById("loginSection").classList.toggle("hidden");
+}
+
+function login(){
+  if(document.getElementById("password").value === ADMIN_PASSWORD){
+    localStorage.setItem("admin","true");
+    document.getElementById("adminPanel").classList.remove("hidden");
+    document.getElementById("logoutBtn").classList.remove("hidden");
+    document.getElementById("loginSection").classList.add("hidden");
+    renderizar();
+  } else {
+    alert("Contraseña incorrecta");
   }
 }
 
-buscador.addEventListener("input", mostrarProductos);
-filtroCategoria.addEventListener("change", mostrarProductos);
-
-function exportarTXT() {
-  const dataStr = JSON.stringify(productos);
-  const blob = new Blob([dataStr], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "base_datos_productos.txt";
-  a.click();
+function cerrarSesion(){
+  localStorage.removeItem("admin");
+  document.getElementById("adminPanel").classList.add("hidden");
+  document.getElementById("logoutBtn").classList.add("hidden");
+  renderizar();
 }
 
-function importarTXT() {
-  const archivo = document.getElementById("importarArchivo").files[0];
-  if (!archivo) return alert("Selecciona un archivo TXT");
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    productos = JSON.parse(e.target.result);
-    guardarLocal();
-    mostrarProductos();
-  };
-  reader.readAsText(archivo);
+function isAdmin(){
+  return localStorage.getItem("admin")==="true";
 }
 
-mostrarProductos();
+if(isAdmin()){
+  document.getElementById("adminPanel").classList.remove("hidden");
+  document.getElementById("logoutBtn").classList.remove("hidden");
+}
+
+renderizar();
 </script>
 
 </body>
