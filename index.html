@@ -31,7 +31,7 @@ img { width:100%; height:150px; object-fit:cover; border-radius:8px; }
   <input type="text" id="descripcion" placeholder="Descripción" required>
   <input type="text" id="categoria" placeholder="Categoría" required>
   <input type="number" id="precio" placeholder="Precio" required>
-  <input type="text" id="imagen" placeholder="URL de imagen" required>
+  <input type="file" id="imagen" accept="image/*" required>
   <button type="submit">Guardar Producto</button>
 </form>
 
@@ -68,27 +68,37 @@ function mostrarProductos() {
 formulario.addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const producto = {
-    codigo: document.getElementById("codigo").value,
-    nombre: document.getElementById("nombre").value,
-    descripcion: document.getElementById("descripcion").value,
-    categoria: document.getElementById("categoria").value,
-    precio: document.getElementById("precio").value,
-    imagen: document.getElementById("imagen").value
+  const indice = document.getElementById("indice").value;
+  const fileInput = document.getElementById("imagen");
+  const file = fileInput.files[0];
+
+  const reader = new FileReader();
+
+  reader.onload = function() {
+    const producto = {
+      codigo: document.getElementById("codigo").value,
+      nombre: document.getElementById("nombre").value,
+      descripcion: document.getElementById("descripcion").value,
+      categoria: document.getElementById("categoria").value,
+      precio: document.getElementById("precio").value,
+      imagen: reader.result
+    };
+
+    if (indice === "") {
+      productos.push(producto);
+    } else {
+      productos[indice] = producto;
+      document.getElementById("indice").value = "";
+    }
+
+    guardarLocal();
+    formulario.reset();
+    mostrarProductos();
   };
 
-  const indice = document.getElementById("indice").value;
-
-  if (indice === "") {
-    productos.push(producto);
-  } else {
-    productos[indice] = producto;
-    document.getElementById("indice").value = "";
+  if (file) {
+    reader.readAsDataURL(file);
   }
-
-  guardarLocal();
-  formulario.reset();
-  mostrarProductos();
 });
 
 function editar(index) {
@@ -98,7 +108,6 @@ function editar(index) {
   document.getElementById("descripcion").value = p.descripcion;
   document.getElementById("categoria").value = p.categoria;
   document.getElementById("precio").value = p.precio;
-  document.getElementById("imagen").value = p.imagen;
   document.getElementById("indice").value = index;
 }
 
