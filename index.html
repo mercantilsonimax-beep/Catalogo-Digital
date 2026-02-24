@@ -116,6 +116,56 @@ header .buttons button {
 @media(max-width: 600px){
   .card { width: 100%; }
 }
+  /* Modal */
+.modal {
+  display: none; /* oculto por defecto */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8); /* fondo semi-transparente */
+}
+
+.modal-content {
+  background:white;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+}
+
+.modal-content img {
+  width:100%;
+  height:auto;
+  max-height:400px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.modal-content h3 {
+  margin:15px 0 5px 0;
+}
+
+.modal-content p {
+  margin:5px 0;
+}
+
+.close-modal {
+  position:absolute;
+  top:20px;
+  right:30px;
+  font-size:28px;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -249,7 +299,64 @@ if(isAdmin()){ document.getElementById("adminPanel").classList.remove("hidden");
 buscador.addEventListener("input",renderizar);
 filtroCategoria.addEventListener("change",renderizar);
 
-renderizar();
+renderizar(productos.filter(p=> ... ).forEach((p,i)=>{
+  tienda.innerHTML += `
+    <div class="card" onclick="abrirModal(${i})">
+      <div class="card-img-container">
+        <img src="${p.imagen}">
+      </div>
+      <div class="card-body">
+        <h3>${p.nombre}</h3>
+        <p>${p.descripcion}</p>
+        <p><strong>Código:</strong> ${p.codigo}</p>
+        <p><strong>Categoría:</strong> ${p.categoria}</p>
+        <p class="price">$${p.precio}</p>
+        ${isAdmin()?`<button onclick="event.stopPropagation(); editar(${i})">Editar</button>
+                      <button onclick="event.stopPropagation(); eliminar(${i})">Eliminar</button>`:``}
+      </div>
+    </div>
+  `;
+}););
+  // Modal
+const modal = document.getElementById("modalProducto");
+const modalImagen = document.getElementById("modalImagen");
+const modalNombre = document.getElementById("modalNombre");
+const modalDescripcion = document.getElementById("modalDescripcion");
+const modalCodigo = document.getElementById("modalCodigo");
+const modalCategoria = document.getElementById("modalCategoria");
+const modalPrecio = document.getElementById("modalPrecio");
+
+function abrirModal(i){
+  const p = productos[i];
+  modalImagen.src = p.imagen;
+  modalNombre.textContent = p.nombre;
+  modalDescripcion.textContent = p.descripcion;
+  modalCodigo.textContent = p.codigo;
+  modalCategoria.textContent = p.categoria;
+  modalPrecio.textContent = "$" + p.precio;
+  modal.style.display = "block";
+}
+
+function cerrarModal(){
+  modal.style.display = "none";
+}
+
+// Cerrar al hacer clic fuera del modal
+window.onclick = function(event){
+  if(event.target == modal) modal.style.display = "none";
+}
 </script>
+  <!-- Modal Producto -->
+<div id="modalProducto" class="modal">
+  <span class="close-modal" onclick="cerrarModal()">&times;</span>
+  <div class="modal-content" id="modalContent">
+    <img id="modalImagen" src="">
+    <h3 id="modalNombre"></h3>
+    <p id="modalDescripcion"></p>
+    <p><strong>Código:</strong> <span id="modalCodigo"></span></p>
+    <p><strong>Categoría:</strong> <span id="modalCategoria"></span></p>
+    <p class="price" id="modalPrecio"></p>
+  </div>
+</div>
 </body>
 </html>
