@@ -1,36 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>MERCANTIL SONIMAX</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Tienda Premium</title>
 <style>
-body {
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:#f5f6fa;
-}
+/* Reset básico */
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
 
+/* Header estilo Amazon */
 header {
-  background:#111;
+  background:#131921;
   color:white;
-  padding:15px;
+  padding:15px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
 }
 
-button {
-  padding:8px 14px;
+header h1 { font-size:24px; }
+
+header .buttons button {
+  background:#febd69;
+  color:#111;
+  font-weight:bold;
+  padding:8px 12px;
+  margin-left:10px;
   border:none;
-  cursor:pointer;
   border-radius:6px;
+  cursor:pointer;
 }
 
-.admin-btn { background:#ff4757; color:white; }
-.logout-btn { background:#2ed573; color:white; }
+/* Buscador */
+#buscador { width:300px; padding:8px; border-radius:6px; border:none; margin-right:10px; }
 
+/* Filtro categorías */
+#filtroCategoria { padding:8px; border-radius:6px; border:none; }
+
+/* Login */
+.login-box {
+  width:300px; margin:40px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center;
+}
+
+/* Panel admin */
+#adminPanel {
+  background:white; padding:20px; margin:20px auto; width:320px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+#adminPanel input { width:90%; margin:5px 0; padding:8px; border-radius:6px; border:1px solid #ccc; }
+
+#adminPanel button { width:95%; padding:10px; margin-top:10px; background:#131921; color:white; font-weight:bold; border:none; border-radius:6px; cursor:pointer; }
+
+/* Grid productos estilo Amazon */
 .grid {
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -39,59 +61,48 @@ button {
 }
 
 .card {
-  background:white;
-  border-radius:12px;
+  background:white; border-radius:10px; overflow:hidden;
   box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  overflow:hidden;
-  transition:0.3s;
+  transition: transform 0.3s;
 }
 
-.card:hover {
-  transform:translateY(-5px);
+.card:hover { transform:translateY(-5px); }
+
+.card img { width:100%; height:200px; object-fit:cover; }
+
+.card-body { padding:15px; }
+
+.card-body h3 { font-size:18px; margin-bottom:5px; }
+
+.card-body p { font-size:14px; margin-bottom:5px; color:#555; }
+
+.card-body .price { font-weight:bold; font-size:16px; color:#b12704; }
+
+.card-body button {
+  background:#f0c14b; border:1px solid #a88734; border-radius:4px;
+  padding:6px 10px; margin-top:5px; cursor:pointer; font-weight:bold;
 }
 
-.card img {
-  width:100%;
-  height:200px;
-  object-fit:cover;
-}
-
-.card-body {
-  padding:15px;
-}
-
-.price {
-  font-size:18px;
-  font-weight:bold;
-  color:#2f3542;
-}
-
+/* Botones ocultos por defecto */
 .hidden { display:none; }
 
-.login-box {
-  width:300px;
-  margin:100px auto;
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  text-align:center;
-}
-
-input {
-  width:90%;
-  padding:8px;
-  margin:8px 0;
+/* Responsive */
+@media(max-width:600px){
+  header h1 { font-size:20px; margin-bottom:10px; }
+  #buscador { width:100%; margin-bottom:10px; }
 }
 </style>
 </head>
-
 <body>
 
 <header>
-  <h2>SONIMAX</h2>
-  <div>
-    <button class="admin-btn" onclick="mostrarLogin()">Administrador</button>
+  <h1>Mi Tienda Premium</h1>
+  <div class="buttons">
+    <input type="text" id="buscador" placeholder="Buscar nombre o código">
+    <select id="filtroCategoria">
+      <option value="">Todas las categorías</option>
+    </select>
+    <button class="admin-btn" onclick="mostrarLogin()">Admin</button>
     <button class="logout-btn hidden" id="logoutBtn" onclick="cerrarSesion()">Cerrar sesión</button>
   </div>
 </header>
@@ -104,50 +115,69 @@ input {
 </div>
 
 <!-- PANEL ADMIN -->
-<div id="adminPanel" class="hidden" style="padding:20px;">
+<div id="adminPanel" class="hidden">
   <h3>Agregar Producto</h3>
-  <input type="text" id="codigo" placeholder="Código">
+  <input type="text" id="codigo" placeholder="Código del producto">
   <input type="text" id="nombre" placeholder="Nombre">
   <input type="text" id="descripcion" placeholder="Descripción">
   <input type="text" id="categoria" placeholder="Categoría">
   <input type="number" id="precio" placeholder="Precio">
   <input type="file" id="imagen" accept="image/*">
-  <button onclick="guardarProducto()">Guardar</button>
+  <button onclick="guardarProducto()">Guardar Producto</button>
 </div>
 
-<!-- TIENDA -->
+<!-- Grid Productos -->
 <div class="grid" id="tienda"></div>
 
 <script>
-const ADMIN_PASSWORD = "sonimax"; // 🔐 cambia esta contraseña
+// 🔐 Configuración
+const ADMIN_PASSWORD = "1234"; // cambia la contraseña
 
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
-function guardarLocal(){
-  localStorage.setItem("productos", JSON.stringify(productos));
+const tienda = document.getElementById("tienda");
+const buscador = document.getElementById("buscador");
+const filtroCategoria = document.getElementById("filtroCategoria");
+
+function guardarLocal(){ localStorage.setItem("productos", JSON.stringify(productos)); }
+
+// Actualizar categorías automáticamente
+function actualizarCategorias(){
+  const categorias = [...new Set(productos.map(p=>p.categoria))];
+  filtroCategoria.innerHTML='<option value="">Todas las categorías</option>';
+  categorias.forEach(cat => filtroCategoria.innerHTML+=`<option value="${cat}">${cat}</option>`);
 }
 
+// Renderizar productos
 function renderizar(){
-  const tienda = document.getElementById("tienda");
-  tienda.innerHTML="";
-  productos.forEach((p,i)=>{
+  const textoBusqueda = buscador.value.toLowerCase();
+  const categoriaSeleccionada = filtroCategoria.value;
+
+  tienda.innerHTML = "";
+
+  productos.filter(p=>
+    (p.nombre.toLowerCase().includes(textoBusqueda) || p.codigo.toLowerCase().includes(textoBusqueda)) &&
+    (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
+  ).forEach((p,i)=>{
     tienda.innerHTML += `
       <div class="card">
         <img src="${p.imagen}">
         <div class="card-body">
-          <h4>${p.nombre}</h4>
+          <h3>${p.nombre}</h3>
           <p>${p.descripcion}</p>
+          <p><strong>Código:</strong> ${p.codigo}</p>
+          <p><strong>Categoría:</strong> ${p.categoria}</p>
           <p class="price">$${p.precio}</p>
-          ${isAdmin() ? `
-            <button onclick="editar(${i})">Editar</button>
-            <button onclick="eliminar(${i})">Eliminar</button>
-          ` : ``}
+          ${isAdmin()?`<button onclick="editar(${i})">Editar</button><button onclick="eliminar(${i})">Eliminar</button>`:``}
         </div>
       </div>
     `;
   });
+
+  actualizarCategorias();
 }
 
+// Guardar producto
 function guardarProducto(){
   const file = document.getElementById("imagen").files[0];
   const reader = new FileReader();
@@ -166,50 +196,35 @@ function guardarProducto(){
   if(file) reader.readAsDataURL(file);
 }
 
-function eliminar(i){
-  productos.splice(i,1);
-  guardarLocal();
-  renderizar();
-}
+// Editar y eliminar
+function eliminar(i){ productos.splice(i,1); guardarLocal(); renderizar(); }
+function editar(i){ alert("Modo edición simplificado. Puedes mejorarlo después 😉"); }
 
-function editar(i){
-  alert("Modo edición simplificado. Puedes mejorarlo luego 😉");
-}
-
-function mostrarLogin(){
-  document.getElementById("loginSection").classList.toggle("hidden");
-}
-
+// Login Admin
+function mostrarLogin(){ document.getElementById("loginSection").classList.toggle("hidden"); }
 function login(){
-  if(document.getElementById("password").value === ADMIN_PASSWORD){
+  if(document.getElementById("password").value===ADMIN_PASSWORD){
     localStorage.setItem("admin","true");
     document.getElementById("adminPanel").classList.remove("hidden");
     document.getElementById("logoutBtn").classList.remove("hidden");
     document.getElementById("loginSection").classList.add("hidden");
     renderizar();
-  } else {
-    alert("Contraseña incorrecta");
-  }
+  } else alert("Contraseña incorrecta");
 }
-
 function cerrarSesion(){
   localStorage.removeItem("admin");
   document.getElementById("adminPanel").classList.add("hidden");
   document.getElementById("logoutBtn").classList.add("hidden");
   renderizar();
 }
+function isAdmin(){ return localStorage.getItem("admin")==="true"; }
 
-function isAdmin(){
-  return localStorage.getItem("admin")==="true";
-}
+if(isAdmin()){ document.getElementById("adminPanel").classList.remove("hidden"); document.getElementById("logoutBtn").classList.remove("hidden"); }
 
-if(isAdmin()){
-  document.getElementById("adminPanel").classList.remove("hidden");
-  document.getElementById("logoutBtn").classList.remove("hidden");
-}
+buscador.addEventListener("input",renderizar);
+filtroCategoria.addEventListener("change",renderizar);
 
 renderizar();
 </script>
-
 </body>
 </html>
