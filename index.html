@@ -5,19 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mercantil Sonimax</title>
 <style>
+  /* Header */
+header {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content: space-between;
+  align-items:center;
+  padding:10px 20px;
+  background:#131921;
+  color:white;
+}
+
+/* Logo */
+header .logo {
+  display:flex;
+  align-items:center;
+}
+
+header .logo img {
+  height:50px;
+  width:auto;
+  margin-right:10px;
+  border-radius:6px;
+}
+
+/* Barra de búsqueda y filtro */
+header .search-filters {
+  display:flex;
+  flex:1;
+  max-width:500px;
+  margin:10px;
+}
+
+header .search-filters input,
+header .search-filters select {
+  padding:8px 10px;
+  border-radius:6px;
+  border:none;
+  margin-right:10px;
+  flex:1;
+}
+
+/* Botones usuario/admin */
+header .user-buttons {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+header .user-buttons button {
+  background:#febd69;
+  color:#111;
+  font-weight:bold;
+  padding:8px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* Responsive */
+@media(max-width: 800px){
+  header { flex-direction:column; align-items:flex-start; }
+  header .search-filters { width:100%; margin:10px 0; }
+  header .user-buttons { width:100%; justify-content:flex-start; margin-bottom:10px; }
+}
 /* Reset básico */
 * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
 
 /* Header estilo Amazon */
-header {
-  background:#db0012;
-  color:white;
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-}
+<header>
+  <!-- Logo -->
+  <div class="logo">
+    <img src="TU_LOGO.png" alt="Logo Empresa" id="logoEmpresa">
+    <h1>Mi Tienda Premium</h1>
+  </div>
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="search-filters">
+    <input type="text" id="buscador" placeholder="Buscar nombre o código">
+    <select id="filtroCategoria">
+      <option value="">Todas las categorías</option>
+    </select>
+  </div>
+
+  <!-- Botones de usuario/admin -->
+  <div class="user-buttons">
+    <button class="admin-btn" onclick="mostrarLogin()">Admin</button>
+    <button class="logout-btn hidden" id="logoutBtn" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+</header>
 
 header h1 { font-size:24px; }
 
