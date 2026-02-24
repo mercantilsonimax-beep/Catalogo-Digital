@@ -186,7 +186,7 @@ header .user-buttons {
 <header>
   <div class="logo">
     <img src="https://i.ibb.co/TB8C424K/Dise-o-sin-t-tulo-57.png" alt="SONIMAX">
-    <h1>Sonimax Premium</h1>
+    <h1>Sonimax Mercantil</h1>
   </div>
 
   <div class="search-filters">
@@ -197,7 +197,7 @@ header .user-buttons {
   </div>
 
   <div class="user-buttons">
-    <button id="btnAdminLogin" class="btn btn-admin" onclick="toggleLogin()">Admin</button>
+    <button id="btnAdminLogin" class="btn btn-admin" onclick="toggleLogin()">Administrador</button>
     <button id="btnLogout" class="btn btn-logout hidden" onclick="cerrarSesion()">Cerrar Sesión</button>
   </div>
 </header>
@@ -209,7 +209,7 @@ header .user-buttons {
 </div>
 
 <div id="adminPanel" class="admin-container hidden">
-  <h3 id="panelTitle">Agregar Nuevo Producto</h3>
+  <h3 id="panelTitle">Agregar Producto</h3>
   <input type="text" id="inpCodigo" placeholder="Código de producto">
   <input type="text" id="inpNombre" placeholder="Nombre del producto">
   <textarea id="inpDesc" placeholder="Descripción detallada" rows="2" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; margin:8px 0;"></textarea>
@@ -218,11 +218,11 @@ header .user-buttons {
   <input type="file" id="inpImg" accept="image/*">
   
   <button id="btnGuardar" class="btn btn-save" onclick="guardarProducto()">Guardar Cambios</button>
-  <button id="btnCancelarEdit" class="btn hidden" style="width:100%; margin-top:5px; background:#ccc;" onclick="limpiarFormulario()">Cancelar Edición</button>
+  <button id="btnCancelarEdit" class="btn hidden" style="width:100%; margin-top:5px; background:#ccc;" onclick="limpiarFormulario()">Cancelar</button>
 
   <div class="backup-zone">
-      <button class="btn btn-backup" onclick="descargarRespaldo()">📥 Exportar JSON</button>
-      <button class="btn btn-backup" onclick="document.getElementById('importFile').click()">📤 Importar JSON</button>
+      <button class="btn btn-backup" onclick="descargarRespaldo()">📥 Exportar Base De Datos</button>
+      <button class="btn btn-backup" onclick="document.getElementById('importFile').click()">📤 Importar Base De Datos</button>
       <input type="file" id="importFile" class="hidden" accept=".json" onchange="cargarRespaldo(event)">
   </div>
 </div>
@@ -239,7 +239,7 @@ header .user-buttons {
     <p class="price" id="mPrecio" style="margin:10px 0; font-size: 24px;"></p>
     
     <a id="btnWha" href="#" target="_blank" class="btn-whatsapp">
-        Consultar disponibilidad (WhatsApp)
+        Escribenos (WhatsApp)
     </a>
   </div>
 </div>
