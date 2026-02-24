@@ -35,34 +35,71 @@ img { width:100%; height:150px; object-fit:cover; border-radius:8px; }
   <button type="submit">Guardar Producto</button>
 </form>
 
-<div id="contenedor"></div>
+<div id="contenedor"><hr>
+
+<h2>Buscar y Filtrar</h2>
+
+<input type="text" id="buscador" placeholder="Buscar por nombre o código">
+<select id="filtroCategoria">
+  <option value="">Todas las categorías</option>
+</select>
+
+<br><br>
+
+<button onclick="exportarTXT()">Exportar Base de Datos (TXT)</button>
+<input type="file" id="importarArchivo" accept=".txt">
+<button onclick="importarTXT()">Importar Base de Datos</button>
+
+<hr></div>
 
 <script>
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
 const formulario = document.getElementById("formulario");
 const contenedor = document.getElementById("contenedor");
+const buscador = document.getElementById("buscador");
+const filtroCategoria = document.getElementById("filtroCategoria");
 
 function guardarLocal() {
   localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-function mostrarProductos() {
-  contenedor.innerHTML = "";
-  productos.forEach((producto, index) => {
-    contenedor.innerHTML += `
-      <div class="producto">
-        <img src="${producto.imagen}">
-        <h3>${producto.nombre}</h3>
-        <p><strong>Código:</strong> ${producto.codigo}</p>
-        <p><strong>Categoría:</strong> ${producto.categoria}</p>
-        <p>${producto.descripcion}</p>
-        <p><strong>$${producto.precio}</strong></p>
-        <button onclick="editar(${index})">Editar</button>
-        <button onclick="eliminar(${index})">Eliminar</button>
-      </div>
-    `;
+function actualizarCategorias() {
+  const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
+  filtroCategoria.innerHTML = '<option value="">Todas las categorías</option>';
+  categoriasUnicas.forEach(cat => {
+    filtroCategoria.innerHTML += `<option value="${cat}">${cat}</option>`;
   });
+}
+
+function mostrarProductos() {
+  const textoBusqueda = buscador.value.toLowerCase();
+  const categoriaSeleccionada = filtroCategoria.value;
+
+  contenedor.innerHTML = "";
+
+  productos
+    .filter(p =>
+      (p.nombre.toLowerCase().includes(textoBusqueda) ||
+       p.codigo.toLowerCase().includes(textoBusqueda)) &&
+      (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
+    )
+    .forEach((producto, index) => {
+      contenedor.innerHTML += `
+        <div class="producto">
+          <img src="${producto.imagen}">
+          <h3>${producto.nombre}</h3>
+          <p><strong>Código:</strong> ${producto.codigo}</p>
+          <p><strong>Categoría:</strong> ${producto.categoria}</p>
+          <p>${producto.descripcion}</p>
+          <p><strong>$${producto.precio}</strong></p>
+          <button onclick="editar(${index})">Editar</button>
+          <button onclick="eliminar(${index})">Eliminar</button>
+        </div>
+      `;
+    });
+
+  actualizarCategorias();
 }
 
 formulario.addEventListener("submit", function(e) {
@@ -71,7 +108,6 @@ formulario.addEventListener("submit", function(e) {
   const indice = document.getElementById("indice").value;
   const fileInput = document.getElementById("imagen");
   const file = fileInput.files[0];
-
   const reader = new FileReader();
 
   reader.onload = function() {
@@ -96,9 +132,7 @@ formulario.addEventListener("submit", function(e) {
     mostrarProductos();
   };
 
-  if (file) {
-    reader.readAsDataURL(file);
-  }
+  if (file) reader.readAsDataURL(file);
 });
 
 function editar(index) {
@@ -117,6 +151,32 @@ function eliminar(index) {
     guardarLocal();
     mostrarProductos();
   }
+}
+
+buscador.addEventListener("input", mostrarProductos);
+filtroCategoria.addEventListener("change", mostrarProductos);
+
+function exportarTXT() {
+  const dataStr = JSON.stringify(productos);
+  const blob = new Blob([dataStr], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "base_datos_productos.txt";
+  a.click();
+}
+
+function importarTXT() {
+  const archivo = document.getElementById("importarArchivo").files[0];
+  if (!archivo) return alert("Selecciona un archivo TXT");
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    productos = JSON.parse(e.target.result);
+    guardarLocal();
+    mostrarProductos();
+  };
+  reader.readAsText(archivo);
 }
 
 mostrarProductos();
