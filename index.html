@@ -235,16 +235,19 @@ function renderizar(){
     (categoriaSeleccionada === "" || p.categoria === categoriaSeleccionada)
   ).forEach((p,i)=>{
     tienda.innerHTML += `
-      <div class="card">
+      <div class="card" onclick="abrirModal(${i})">
+      <div class="card-img-container">
         <img src="${p.imagen}">
-        <div class="card-body">
-          <h3>${p.nombre}</h3>
-          <p>${p.descripcion}</p>
-          <p><strong>Código:</strong> ${p.codigo}</p>
-          <p><strong>Categoría:</strong> ${p.categoria}</p>
-          <p class="price">$${p.precio}</p>
-          ${isAdmin()?`<button onclick="editar(${i})">Editar</button><button onclick="eliminar(${i})">Eliminar</button>`:``}
-        </div>
+      </div>
+      <div class="card-body">
+        <h3>${p.nombre}</h3>
+        <p>${p.descripcion}</p>
+        <p><strong>Código:</strong> ${p.codigo}</p>
+        <p><strong>Categoría:</strong> ${p.categoria}</p>
+        <p class="price">$${p.precio}</p>
+        ${isAdmin()?`<button onclick="event.stopPropagation(); editar(${i})">Editar</button>
+                      <button onclick="event.stopPropagation(); eliminar(${i})">Eliminar</button>`:``}
+      </div>
       </div>
     `;
   });
